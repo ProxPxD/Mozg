@@ -1,0 +1,8 @@
+[project]
+name = "mozg"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "argparse>=1.4.0",
+    "ruff>=0.15.22",
+]
