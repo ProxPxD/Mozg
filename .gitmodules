@@ -1,0 +1,3 @@
+[submodule "testing/core"]
+	path = testing/core
+	url = git@github.com:ProxPxD/TestCore.git
