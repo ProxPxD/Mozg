@@ -4,5 +4,23 @@ version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
     "argparse>=1.4.0",
+    "pydash>=8.0.6",
+    "pytest>=9.1.1",
     "ruff>=0.15.22",
+    "toolz>=1.1.0",
 ]
+[tool.basedpyright]
+deprecateTypingAliases = false
+reportMissingTypeStubs = false
+reportUnknownVariableType = false
+reportUnknownArgumentType = false
+reportUnknownMemberType = false
+reportExplicitAny = false
+reportAny = false
+strictParameterNoneValue = false
+reportUnknownLambdaType = false
+reportOptionalOperand = false
+reportUnusedParameter = false  # Handled by Ruff
+reportRedeclaration = false
+reportMissingTypeArgument = false
+reportUnknownParameterType = false
