@@ -1,1 +1,5 @@
-print('test')
+from editor import editor
+
+text = editor()
+
+print(text)
