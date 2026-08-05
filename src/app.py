@@ -1,6 +1,9 @@
+from input import CLI
+
+
 class App:
     def __init__(self) -> None:
-        pass
+        self.cli = CLI()
 
     def run(self) -> None:
         ...
