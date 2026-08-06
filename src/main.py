@@ -1,9 +1,9 @@
 from editor import editor
 from app import App
 
-text = editor()
+# text = editor()
 
-print(text)
+# print(text)
 
 if __name__ == '__main__':
     App().run()
