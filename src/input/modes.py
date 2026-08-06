@@ -1,15 +1,15 @@
-from typing import NamedTuple, Sequence
+from typing import NamedTuple
 
-from input.consts import Ops
+from input.consts import Mode, Ops
 
 
-class Mode:
-    def __init__(self, *commands: str) -> None:
-        self.commands: Sequence[str] = commands
+class ComlexMode:
+    def __init__(self, *commands: str, repr_: str = None) -> None:
+        self.repr: str = repr_ or self.commands[0]
+        self.commands: list[str] = list(commands)
 
-    @property
-    def main(self) -> str:
-        return self.commands[0]
+    def is_substring(self, value: str) -> bool:
+        return any(command.startswith(value) for command in self.commands)
 
     @property
     def substrings(self) -> list[str]:
@@ -20,16 +20,20 @@ class Mode:
         })
 
 
-class Modes(NamedTuple):
-    add: Mode = Mode(Ops.ADD)
-    rem: Mode = Mode(Ops.REMOVE, Ops.DELETE, Ops.RM)
+    def __contains__(self, value: str) -> bool:
+        return self.is_substring(value)
+
+
+class ComplexModes(NamedTuple):
+    add: ComlexMode = ComlexMode(Ops.ADD, repr_=Mode.ADD)
+    rem: ComlexMode = ComlexMode(Ops.REMOVE, Ops.DELETE, Ops.RM, repr_=Mode.DEL)
 
 
 def detect_mode(val: str) -> str:
     matches: list[str] = [
-        mode.main
-        for mode in Modes()
-        if val in mode.substrings
+        mode.repr
+        for mode in ComplexModes()
+        if val in mode
     ]
 
     match len(matches):

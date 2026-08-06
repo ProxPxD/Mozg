@@ -1,4 +1,4 @@
-from input import CLI
+from input import CLI, InputData
 
 
 class App:
@@ -6,7 +6,7 @@ class App:
         self.cli = CLI()
 
     def run(self) -> None:
-        ...
+        input_data: InputData = self.cli.parse()
 
     def run_once(self) -> None:
         ...

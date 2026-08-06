@@ -6,3 +6,7 @@ class Ops(StrEnum):
     DELETE = 'delete'
     REMOVE = 'remove'
     RM = 'rm'
+
+class Mode(StrEnum):
+    ADD = Ops.ADD.value.upper()
+    DEL = Ops.DELETE.value[:3].upper()
