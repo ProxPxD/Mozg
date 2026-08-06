@@ -1,5 +1,4 @@
 from enum import StrEnum
-from typing import Any
 
 
 class Ops(StrEnum):
@@ -7,4 +6,3 @@ class Ops(StrEnum):
     DELETE = 'delete'
     REMOVE = 'remove'
     RM = 'rm'
-
