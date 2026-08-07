@@ -1,6 +1,6 @@
 from typing import NamedTuple
 
-from input.consts import Mode, Ops
+from input.concepts.keywords import Mode, RawMode
 
 
 class ComlexMode:
@@ -25,8 +25,8 @@ class ComlexMode:
 
 
 class ComplexModes(NamedTuple):
-    add: ComlexMode = ComlexMode(Ops.ADD, repr_=Mode.ADD)
-    rem: ComlexMode = ComlexMode(Ops.REMOVE, Ops.DELETE, Ops.RM, repr_=Mode.DEL)
+    add: ComlexMode = ComlexMode(RawMode.ADD, repr_=Mode.ADD)
+    rem: ComlexMode = ComlexMode(RawMode.REMOVE, RawMode.DELETE, RawMode.RM, repr_=Mode.DEL)
 
 
 def detect_mode(val: str) -> str:

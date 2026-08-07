@@ -1,9 +1,10 @@
 import sys
 from argparse import ArgumentParser
 
-from modes import detect_mode
+from concepts.sentinels import NO_ARG, UNUSED
 
-from input.input_data import InputData
+from .concepts import detect_mode
+from .input_data import InputData
 
 
 class CLI:
@@ -15,11 +16,11 @@ class CLI:
         )
 
         self.parser.add_argument('mode', type=detect_mode, help='Mode #todo')
-        self.parser.add_argument('query', nargs='*', help='Query #todo')
+        self.parser.add_argument('--file', '-f', nargs='?', dest='file', const=NO_ARG, default=UNUSED, help='Query File')
+        self.parser.add_argument('--editor', '-e', dest='file', action='store_const', const=NO_ARG)
 
     def parse(self, args: list[str] = None) -> InputData:
-        all_args = args or sys.argv[1:]
-        main_args, rest_args = all_args[0:1], all_args[1:]
-        parsed = self.parser.parse_args(main_args)
-        parsed.rest = ' '.join(rest_args)
-        return InputData(**vars(parsed))
+        args = args or sys.argv[1:]
+        args = [subarg for arg in args for subarg in arg.split('\xa0')]
+        parsed, rest = self.parser.parse_known_args(args)
+        return InputData(query=' '.join(rest), **vars(parsed))
