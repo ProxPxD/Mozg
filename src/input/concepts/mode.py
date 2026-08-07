@@ -25,14 +25,13 @@ class ComlexMode:
             for i in range(len(command))
         )
 
-
     def __contains__(self, value: str) -> bool:
         return self.is_substring(value)
 
 
 class ComplexModes(NamedTuple):
     add: ComlexMode = ComlexMode(raw_mode.ADD, repr_=Mode.ADD)
-    rem: ComlexMode = ComlexMode(raw_mode.REMOVE, raw_mode.DELETE, raw_mode.RM, repr_=Mode.DEL)
+    del_: ComlexMode = ComlexMode(raw_mode.DELETE, raw_mode.REMOVE, raw_mode.RM, repr_=Mode.DEL)
 
 
 def detect_mode(val: str) -> str:
