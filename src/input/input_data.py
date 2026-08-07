@@ -1,9 +1,8 @@
 from dataclasses import dataclass
 from typing import Any
 
-import concepts.sentinels as sentinels
-from concepts.types import File
-from input.concepts import Mode
+import input.concepts as concepts
+from input.concepts import File, Mode
 
 
 class InconsistentInputError(ValueError):
@@ -36,9 +35,9 @@ class InputData:
 
     def _get_validation_error(self) -> ConflictingQuerySourcesError | None:
         match bool(self.query), self.file:
-            case True, sentinels.NO_ARG:
+            case True, concepts.file.EDITOR:
                 return InlineQueryWithEditorQueryError()
-            case _, sentinels.UNUSED:
+            case _, concepts.file.NO_FILE:
                 return None
             case True, str():
                 return InlineQueryWithFileQueryError()
