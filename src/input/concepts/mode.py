@@ -1,16 +1,12 @@
 from enum import StrEnum
 from typing import NamedTuple
 
+import input.concepts.keywords.mode as raw_mode
 
-class RawMode(StrEnum):
-    ADD = 'add'
-    DELETE = 'delete'
-    REMOVE = 'remove'
-    RM = 'rm'
 
 class Mode(StrEnum):
-    ADD = RawMode.ADD.value.upper()
-    DEL = RawMode.DELETE.value[:3].upper()
+    ADD = raw_mode.ADD.upper()
+    DEL = raw_mode.DELETE[:3].upper()
 
 
 class ComlexMode:
@@ -35,8 +31,8 @@ class ComlexMode:
 
 
 class ComplexModes(NamedTuple):
-    add: ComlexMode = ComlexMode(RawMode.ADD, repr_=Mode.ADD)
-    rem: ComlexMode = ComlexMode(RawMode.REMOVE, RawMode.DELETE, RawMode.RM, repr_=Mode.DEL)
+    add: ComlexMode = ComlexMode(raw_mode.ADD, repr_=Mode.ADD)
+    rem: ComlexMode = ComlexMode(raw_mode.REMOVE, raw_mode.DELETE, raw_mode.RM, repr_=Mode.DEL)
 
 
 def detect_mode(val: str) -> str:
