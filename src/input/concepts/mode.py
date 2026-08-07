@@ -11,19 +11,19 @@ class Mode(StrEnum):
 
 class ComlexMode:
     def __init__(self, *commands: str, repr_: str = None) -> None:
-        self.repr: str = repr_ or self.commands[0]
         self.commands: list[str] = list(commands)
+        self.repr: str = repr_ or self.commands[0]
 
     def is_substring(self, value: str) -> bool:
         return any(command.startswith(value) for command in self.commands)
 
     @property
-    def substrings(self) -> list[str]:
-        return list({
+    def substrings(self) -> frozenset[str]:
+        return frozenset(
             command[:i+1]
             for command in self.commands
             for i in range(len(command))
-        })
+        )
 
 
     def __contains__(self, value: str) -> bool:
