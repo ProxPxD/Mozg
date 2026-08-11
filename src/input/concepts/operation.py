@@ -1,15 +1,15 @@
 from enum import StrEnum
 from typing import NamedTuple
 
-import input.concepts.keywords.mode as raw_mode
+import input.concepts.keywords.operation as raw_op
 
 
-class Mode(StrEnum):
-    ADD = raw_mode.ADD.upper()
-    DEL = raw_mode.DELETE[:3].upper()
+class Operation(StrEnum):
+    ADD = raw_op.ADD.upper()
+    DEL = raw_op.DELETE[:3].upper()
 
 
-class ComlexMode:
+class ComlexOperation:
     def __init__(self, *commands: str, repr_: str = None) -> None:
         self.commands: list[str] = list(commands)
         self.repr: str = repr_ or self.commands[0]
@@ -19,27 +19,19 @@ class ComlexMode:
 
     @property
     def substrings(self) -> frozenset[str]:
-        return frozenset(
-            command[:i+1]
-            for command in self.commands
-            for i in range(len(command))
-        )
+        return frozenset(command[: i + 1] for command in self.commands for i in range(len(command)))
 
     def __contains__(self, value: str) -> bool:
         return self.is_substring(value)
 
 
-class ComplexModes(NamedTuple):
-    add: ComlexMode = ComlexMode(raw_mode.ADD, repr_=Mode.ADD)
-    del_: ComlexMode = ComlexMode(raw_mode.DELETE, raw_mode.REMOVE, raw_mode.RM, repr_=Mode.DEL)
+class ComplexOperaions(NamedTuple):
+    add: ComlexOperation = ComlexOperation(raw_op.ADD, repr_=Operation.ADD)
+    del_: ComlexOperation = ComlexOperation(raw_op.DELETE, raw_op.REMOVE, raw_op.RM, repr_=Operation.DEL)
 
 
-def detect_mode(val: str) -> str:
-    matches: list[str] = [
-        mode.repr
-        for mode in ComplexModes()
-        if val in mode
-    ]
+def detect_operation(val: str) -> str:
+    matches: list[str] = [op.repr for op in ComplexOperaions() if val in op]
 
     match len(matches):
         case 1: return matches[0]

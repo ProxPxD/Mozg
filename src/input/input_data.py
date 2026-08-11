@@ -2,7 +2,8 @@ from dataclasses import dataclass
 from typing import Any
 
 import input.concepts as concepts
-from input.concepts import File, Mode
+from input.concepts import File, Operation
+from input.concepts.file import FileState
 
 
 class InconsistentInputError(ValueError):
@@ -25,19 +26,19 @@ class InlineQueryWithEditorQueryError(ConflictingQuerySourcesError):
 
 @dataclass
 class InputData:
-    mode: Mode
+    operation: Operation
     file: File
-    query: str
+    input: str
 
     def __post_init__(self) -> None:
         if error := self._get_validation_error():
             raise error
 
     def _get_validation_error(self) -> ConflictingQuerySourcesError | None:
-        match bool(self.query), self.file:
-            case True, concepts.file.EDITOR:
+        match bool(self.input), self.file:
+            case True, FileState.NO_FILE:
                 return InlineQueryWithEditorQueryError()
-            case _, concepts.file.NO_FILE:
+            case _, FileState.NO_FLAG:
                 return None
             case True, str():
                 return InlineQueryWithFileQueryError()

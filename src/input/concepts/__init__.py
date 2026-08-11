@@ -1,2 +1,2 @@
-from .mode import detect_mode, Mode
-from .file import NO_FILE, EDITOR, File
+from .operation import detect_operation, Operation
+from .file import NO_FILE, NO_FLAG, File

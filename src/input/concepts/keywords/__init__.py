@@ -1,2 +1,2 @@
 from . import functional
-from . import mode
+from . import operation

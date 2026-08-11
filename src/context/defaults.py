@@ -1,12 +1,11 @@
-
 from dataclasses import dataclass
 
-from input import Mode
+from input import Operation
 
 
 @dataclass
 class Defaults:
     loop: bool = False
-    mode: Mode | None = None
-    query: str | None = None
+    operation: Operation | None = None
+    input: str | None = None
     file: str | None = None
