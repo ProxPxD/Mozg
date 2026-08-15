@@ -4,10 +4,11 @@ dict(
             _:anhi 
                 a :user, :Person ;
                 :eq 'Anhi' ;
-                :yr _:needs .
+                :yr _:buys .
             _:needs 
                 a :action ;
                 :eq 'need' ;
+                :ry _:anhi ;
                 :rj _:buy . 
             _:buys
                 a :action ;
