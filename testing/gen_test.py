@@ -17,7 +17,7 @@ dict(
             _:product
                 :eq 'sauce'.
         ''',
-        proposal='''
+        proposal=''' #todo
             [a :Person, :user; :name "anhi"] :yr [a ]
         '''
         short='''
