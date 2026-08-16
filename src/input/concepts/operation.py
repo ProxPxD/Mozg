@@ -30,7 +30,7 @@ class ComplexOperaions(NamedTuple):
     del_: ComlexOperation = ComlexOperation(raw_op.DELETE, raw_op.REMOVE, raw_op.RM, repr_=Operation.DEL)
 
 
-def detect_operation(val: str) -> str:
+def detect_operation(val: str, /) -> str:
     matches: list[str] = [op.repr for op in ComplexOperaions() if val in op]
 
     match len(matches):
