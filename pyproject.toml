@@ -8,6 +8,7 @@ dependencies = [
     "pydash>=8.0.6",
     "pytest>=9.1.1",
     "ruff>=0.15.22",
+    "stanza>=1.14.0",
     "toolz>=1.1.0",
 ]
 [tool.basedpyright]
@@ -27,3 +28,4 @@ reportMissingTypeArgument = 'none'
 reportUnknownParameterType = false
 reportArgumentType = 'none'
 typeCheckingMode = 'basic'
+reportAssignmentType = 'none'
