@@ -3,6 +3,7 @@ name = "mozg"
 version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
+    "accelerate>=1.14.0",
     "argparse>=1.4.0",
     "editor>=1.8.0",
     "hanlp>=2.1.3",
@@ -11,6 +12,7 @@ dependencies = [
     "ruff>=0.15.22",
     "stanza>=1.14.0",
     "toolz>=1.1.0",
+    "transformers>=5.15.0",
 ]
 [tool.basedpyright]
 deprecateTypingAliases = false
