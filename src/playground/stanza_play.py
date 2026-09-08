@@ -8,7 +8,7 @@ from pydash import flow
 from stanza.models.common.doc import END_CHAR, FEATS, LEMMA, START_CHAR, Document, Sentence, Word
 from toolz import pipe
 
-resources_path = Path(__file__).parent.parent.parent / 'resources'
+resources_path = Path(__file__).parent.parent.parent / 'resources' / 'stanza'
 
 resources_path.mkdir(exist_ok=True)
 settings = dict(
