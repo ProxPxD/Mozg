@@ -2,11 +2,13 @@ import os
 
 import torch
 
+from playground.anal_lib import Analizer
 from playground.paths import RESOURCES
 
 hugging_face_resources = RESOURCES / 'hugging_face'
 hugging_face_resources.mkdir(exist_ok=True)
 os.environ['HF_HUB_CACHE'] = str(hugging_face_resources)
+os.environ['TRANSFORMERS_OFFLINE'] = '0'
 
 import json
 
@@ -18,27 +20,6 @@ settings = dict(
 extractor = AutoExtractor.from_pretrained('fastino/gliner2.5-base-v1', **settings)
 # extractor = AutoExtractor.from_pretrained('fastino/gliner2.5-multi-v1'. **settings)
 
-# text = '''
-# Siemens opened a new AI research centre in Berlin.
-# The facility will develop machine learning systems for
-# industrial applications. While Maersk opened a research centre in Kopenhagen.
-# '''
-
-# schema = (
-#     extractor.create_schema()
-#     .entities({
-#         'organization': 'An organization, company, institution, or other group',
-#         'location': 'A geographical location',
-#         'technology': 'A technology, technical field, or computational method',
-#         'research': 'A research activity or research topic',
-#     })
-#     .relations({
-#         'located_in': 'An organization or facility is physically located in a place',
-#         'researches': 'An organization or facility conducts research into a topic',
-#     })
-# )
-
-# result = model.extract(text, schema)
 
 schema = (extractor.create_schema()
     .entities({
@@ -56,10 +37,9 @@ schema = (extractor.create_schema()
     #     .field('type', dtype='str', choices=['checkup', 'followup', 'consultation'])
 )
 
-text = '''
-John is going to visit me on Saturday at 14:30 every week
-'''
-results = extractor.extract(text, schema, include_confidence=True)
+analizer = Analizer(
+    extractor,
+    run=lambda text: extractor.extract(text, schema, include_confidence=True),
+    format_output=lambda results: json.dumps(results, indent=4),
+)
 
-print(results)
-print(json.dumps(results, indent=4))

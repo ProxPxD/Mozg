@@ -1,17 +1,18 @@
+from io import StringIO
 import logging
-from pathlib import Path
+
+from playground.anal_lib import Analizer
+from playground.paths import RESOURCES
+
+resources_path = RESOURCES / 'stanza'
+resources_path.mkdir(exist_ok=True)
 
 import pydash as _
 import stanza
 from pydash import chain as c
 from pydash import flow
-from stanza.models.common.doc import END_CHAR, FEATS, LEMMA, START_CHAR, Document, Sentence, Word
-from toolz import pipe
+from stanza.models.common.doc import END_CHAR, FEATS, LEMMA, START_CHAR, Document, Word
 
-from playground.paths import RESOURCES
-
-resources_path = RESOURCES / 'stanza'
-resources_path.mkdir(exist_ok=True)
 settings = dict(
     model_dir=str(resources_path),
     # logging_level=logging.getLevelName(logging.WARNING),
@@ -40,55 +41,37 @@ nlp = stanza.MultilingualPipeline(
     },
 )
 
-raw_docs = [
-    '. '.join([
-        'John was needing to meet her at home',
-        'I know it',
-    ]),
-    '. '.join([
-        # 'Herbatę zrób',
-        'Będę mógł chcieć planować, żebyś spała',
-        'wiem to, że wiesz',
-        'da psu nożem jabłko',
-    ]),
-]
-docs: list[Document] = [Document([], text=raw_doc) for raw_doc in raw_docs]
-docs = nlp(docs)
 
-words: list[Word] = [word for doc in docs for word in doc.iter_words()]
-
-excluded_fields = {START_CHAR, END_CHAR, LEMMA, FEATS}
-fields = [field for field in words[0].to_dict() if field not in excluded_fields]
-maxes = {field: max(_.map_(words, flow(c().get(field), str, len))) for field in fields}
-
-for i, doc in enumerate(docs):
-    print(f'{i+1}) {doc.lang}')
+def format_output(doc: Document) -> str:
+    words: list[Word] = [word for word in doc.iter_words()]
+    excluded_fields = {START_CHAR, END_CHAR, LEMMA, FEATS}
+    fields = [field for field in words[0].to_dict() if field not in excluded_fields]
+    maxes = {field: max(_.map_(words, flow(c().get(field), str, len))) for field in fields}
+    output = StringIO()
+    print(f'{doc.lang}', file=output)
     for sent in doc.sentences:
-        print(f'{' '*2}{sent.index}) {sent.text}')
+        print(f'{" " * 2}{sent.index}) {sent.text}', file=output)
         for ent in sent.ents:
-            print(f'{' '*4}{ent.text}: {ent.type}')
+            print(f'{" " * 4}{ent.text}: {ent.type}', file=output)
 
-for doc in docs:
-    print(f'{i+1}) {doc.lang}')
+    print(f'{doc.lang}', file=output)
     for sent in doc.sentences:
-        print(f'{' '*2}{sent.index}) {sent.text}')
+        print(f'{" " * 2}{sent.index}) {sent.text}', file=output)
         for word in sent.words:
             if word.upos == 'PUNCT':
                 continue
             word_dict = word.to_dict()
-            print(' '*4, end='')
-            print(  # noqa: T201
+            print(' ' * 4, end='', file=output)
+            print(
                 *[f'{field}: {word_dict.get(field, "-"):<{maxi}}' for field, maxi in maxes.items()],
                 sep=' ' * 2,
+                file=output,
             )
+    return output.getvalue()
 
 
-# print(
-#     f'id: {word.id}',
-#     f'word: {word.text:<{15}}',
-#     f'upos: {word.upos:<5}',
-#     f'xpos: {word.xpos:<5}',
-#     f'feats: {word.feats or '_'}',
-#     f'lemma: {word.lemma}',
-#     sep=' '*4,
-# )
+analizer = Analizer(
+    nlp,
+    run=lambda text: nlp(Document([], text=text)),
+    format_output=format_output,
+)

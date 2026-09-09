@@ -1,5 +1,6 @@
 import os
 
+from playground.anal_lib import Analizer
 from playground.paths import RESOURCES
 
 resources_path = RESOURCES / 'hanlp'
@@ -14,11 +15,8 @@ import hanlp.pretrained  # noqa: E402
 nlp = hanlp.load(
     hanlp.pretrained.mtl.UD_ONTONOTES_TOK_POS_LEM_FEA_NER_SRL_DEP_SDP_CON_XLMR_BASE,
 )
+analizer = Analizer(
+    nlp,
+    format_output='to_pretty',
+)
 
-sentences = [
-    'John was needing to meet her at home',
-    'Będę mógł chcieć planować, żebyś spała',
-]
-for sentence in sentences:
-    result = nlp(sentence)
-    result.pretty_print()
