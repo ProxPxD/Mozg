@@ -1,7 +1,8 @@
 import os
-from pathlib import Path
 
-resources_path = Path(__file__).parent.parent.parent / 'resources' / 'hanlp'
+from playground.paths import RESOURCES
+
+resources_path = RESOURCES / 'hanlp'
 
 os.environ['TRANSFORMERS_OFFLINE'] = '1'
 os.environ['HANLP_HOME'] = str(resources_path)
@@ -14,6 +15,10 @@ nlp = hanlp.load(
     hanlp.pretrained.mtl.UD_ONTONOTES_TOK_POS_LEM_FEA_NER_SRL_DEP_SDP_CON_XLMR_BASE,
 )
 
-result = nlp('John gave Mary a book.')
-
-result.pretty_print()
+sentences = [
+    'John was needing to meet her at home',
+    'Będę mógł chcieć planować, żebyś spała',
+]
+for sentence in sentences:
+    result = nlp(sentence)
+    result.pretty_print()
