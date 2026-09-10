@@ -1,5 +1,7 @@
-from io import StringIO
 import logging
+from io import StringIO
+
+from _typeshed import SupportsWrite
 
 from playground.anal_lib import Analizer
 from playground.paths import RESOURCES
@@ -11,7 +13,7 @@ import pydash as _
 import stanza
 from pydash import chain as c
 from pydash import flow
-from stanza.models.common.doc import END_CHAR, FEATS, LEMMA, START_CHAR, Document, Word
+from stanza.models.common.doc import END_CHAR, LEMMA, START_CHAR, TEXT, Document, Word
 
 settings = dict(
     model_dir=str(resources_path),
@@ -41,32 +43,37 @@ nlp = stanza.MultilingualPipeline(
     },
 )
 
-
-def format_output(doc: Document) -> str:
-    words: list[Word] = [word for word in doc.iter_words()]
-    excluded_fields = {START_CHAR, END_CHAR}  #, LEMMA, FEATS}
-    fields = [field for field in words[0].to_dict() if field not in excluded_fields]
-    maxes = {field: max(_.map_(words, flow(c().get(field), str, len))) for field in fields}
-    output = StringIO()
-    print(f'{doc.lang}', file=output)
+def print_sentences(doc: Document, *, write_to: SupportsWrite[str] | None = None) -> None:
+    print(f'{doc.lang}', file=write_to)
     for sent in doc.sentences:
-        print(f'{" " * 2}{sent.index}) {sent.text}', file=output)
+        print(f'{" " * 2}{sent.index}) {sent.text}', file=write_to)
         for ent in sent.ents:
-            print(f'{" " * 4}{ent.text}: {ent.type}', file=output)
+            print(f'{" " * 4}{ent.text}: {ent.type}', file=write_to)
 
-    print(f'{doc.lang}', file=output)
+def print_doc(doc: Document, maxes: dict[str, int], *, write_to: SupportsWrite[str] | None = None) -> None:
+    print(f'{doc.lang}', file=write_to)
     for sent in doc.sentences:
-        print(f'{" " * 2}{sent.index}) {sent.text}', file=output)
+        print(f'{" " * 2}{sent.index}) {sent.text}', file=write_to)
         for word in sent.words:
             if word.upos == 'PUNCT':
                 continue
             word_dict = word.to_dict()
-            print(' ' * 4, end='', file=output)
+            print(' ' * 4, end='', file=write_to)
             print(
                 *[f'{field}: {word_dict.get(field, "-"):<{maxi}}' for field, maxi in maxes.items()],
                 sep=' ' * 2,
-                file=output,
+                file=write_to,
             )
+
+def format_output(doc: Document) -> str:
+    words: list[Word] = [word for word in doc.iter_words()]
+    excluded_fields = {START_CHAR, END_CHAR}  #, LEMMA, FEATS}
+    # fields = [field for field in words[0].to_dict() if field not in excluded_fields]
+    fields = {TEXT, LEMMA}
+    maxes = {field: max(_.map_(words, flow(c().get(field), str, len))) for field in fields}
+    output = StringIO()
+    print_sentences(doc, write_to=output)
+    print_doc(doc, maxes, write_to=output)
     return output.getvalue()
 
 
