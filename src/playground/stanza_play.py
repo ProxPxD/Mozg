@@ -44,7 +44,7 @@ nlp = stanza.MultilingualPipeline(
 
 def format_output(doc: Document) -> str:
     words: list[Word] = [word for word in doc.iter_words()]
-    excluded_fields = {START_CHAR, END_CHAR, LEMMA, FEATS}
+    excluded_fields = {START_CHAR, END_CHAR}  #, LEMMA, FEATS}
     fields = [field for field in words[0].to_dict() if field not in excluded_fields]
     maxes = {field: max(_.map_(words, flow(c().get(field), str, len))) for field in fields}
     output = StringIO()

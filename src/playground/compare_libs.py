@@ -1,7 +1,8 @@
 import warnings
+
+import gliner_play
 import hanlp_play
 import stanza_play
-import hugging_face_transformer
 
 warnings.filterwarnings(
     'ignore',
@@ -27,7 +28,7 @@ sentences = [
 module_files = {
     'hanlp': hanlp_play,
     'stanza': stanza_play,
-    'gliner2': gliner,
+    'gliner2': gliner_play,
 }
 
 analizers = {name: module.analizer for name, module in module_files.items()}
