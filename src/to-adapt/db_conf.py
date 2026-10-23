@@ -42,7 +42,7 @@ class DBConf:
 
     @property
     def query_endpoint(self) -> str:
-        return self.endpointr
+        return self.endpoint
 
     @property
     def update_endpoint(self) -> str:
