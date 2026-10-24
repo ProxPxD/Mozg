@@ -30,8 +30,17 @@ reportArgumentType = 'none'
 typeCheckingMode = 'basic'
 reportAssignmentType = 'none'
 
+[tool.pytest.ini_options]
+testpaths = ['testing']
+pythonpath = ['src']
+addopts = [
+    '--ignore=testing/core',
+    '-s',
+]
+
 [dependency-groups]
 dev = [
     "pytest>=9.1.1",
+    "python-dotenv>=1.2.4",
     "ruff>=0.17.1",
 ]

@@ -19,7 +19,7 @@ class Auth:
 class ConnectionParameters:
     protocol: str
     host: str
-    port: int
+    port: int | str
 
     @property
     def uri(self) -> str:
@@ -27,10 +27,12 @@ class ConnectionParameters:
 
     @classmethod
     def from_uri(cls, uri: str) -> Self:
-        return cls(**uri_pattern.match(uri).groupdict())
+        if not (matched := uri_pattern.match(uri)):
+            raise ValueError(f'Wrong URI format provided. Expected: {uri_pattern.pattern}, but got {uri}')
+        return cls(**matched.groupdict())
 
 
-@dataclass
+@dataclass(frozen=True)
 class DBConf:
     conn_params: ConnectionParameters
     auth: Auth
