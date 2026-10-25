@@ -1,5 +1,6 @@
 {
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
-    "testing.alwaysRevealTestOnStateChange": false
+    "testing.alwaysRevealTestOnStateChange": false,
+    "python.languageServer": "None"
 }
