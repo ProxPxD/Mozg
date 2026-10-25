@@ -47,7 +47,7 @@ class Tc:
 
 class OntologyTCG(TCG):
     tcs = [
-        # todo: add a duty for someone else by "want" to watch a source of ...
+        # TODO: add a duty for someone else by "want" to watch a source of ...
         # "Swiss Political System" that should have appriopritate context tags
         TC(
             descr='',
