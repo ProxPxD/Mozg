@@ -81,7 +81,7 @@ def db_conf() -> DBConf:
             user=os.environ['TEST_DB_USER'],
             password=os.environ['TEST_DB_PASSWORD'],
         ),
-        conn_params=ConnectionParameters.from_uri('http://localhost:7200'),
+        conn_params=ConnectionParameters.from_uri('http://localhost:7020'),
         repo='mozg-test',
     )
 
