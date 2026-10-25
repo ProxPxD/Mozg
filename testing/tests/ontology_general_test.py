@@ -9,7 +9,7 @@ from collections.abc import Iterable
 
 import pytest
 from core.tcg import TCG
-from SPARQLWrapper import POST, SPARQLWrapper
+from SPARQLWrapper import GET, POST, SPARQLWrapper
 
 from context.db_conf import Auth, ConnectionParameters, DBConf
 
@@ -101,5 +101,6 @@ def test(tc: Tc, sparql: SPARQLWrapper, meta: Meta) -> None:
         sparql.setQuery(tc.init_query)
         sparql.query()
         meta.last_init_query = tc.init_query
+        sparql.setMethod(GET)
         print(meta)
     ...
