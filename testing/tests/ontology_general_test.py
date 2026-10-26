@@ -72,10 +72,25 @@ class OntologyTCG(TCG):
         TC(
             descr='',
             init_query=dedent('''
-                PREFIX test: <mozg:test:>
+                PREFIX : <mozg:test:>
 
                 INSERT DATA {
-                    test:man test:sees test:woman .
+                    _:pl-dane-link
+                        :val "https://www.youtube.com/watch?v=E89x6LpA6Uw";
+                        :is :link;
+                        :feat :youtube .
+                    _:switss-political-system
+                        :name "Swiss Political System"
+
+                    _:source-inst
+                        :feat _:source-role-1, _:source-of-role-1;
+                        :is :Source .
+                    _:source-role-1
+                        :is :SourceRole;
+                        :feat _:pl-dane-link .
+                    _:source-of-role-1
+                        :is :SourceOfRole;
+                        :feat _:switss-political-system.
                 }
             '''),
             checks=[
