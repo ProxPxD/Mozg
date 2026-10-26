@@ -82,7 +82,7 @@ class OntologyTCG(TCG):
                     :switss-political-system
                         :name "Swiss Political System"
 
-                    :Source :feat SourceRole, SourceOfRole.
+                    :Source :feat :SourceRole, :SourceOfRole.
 
                     :source-inst
                         :feat :source-role-1, :source-of-role-1;
