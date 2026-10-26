@@ -53,6 +53,7 @@ class OntologyTCG(TCG):
             descr='',
             init_query=dedent('''
                 PREFIX test: <mozg:test:>
+
                 INSERT DATA {
                     test:man test:sees test:woman .
                 }
