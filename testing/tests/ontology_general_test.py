@@ -128,7 +128,7 @@ def setup_case(tc: Tc, sparql: SPARQLWrapper, meta: Meta) -> None:
     sparql.setMethod(GET)
 
 
-@pytest.fixture(scope='module', autouse=False)
+@pytest.fixture(scope='module', autouse=False)  # TODO: set to autose
 def teardown_session(sparql):
     yield
     sparql.setMethod(POST)
