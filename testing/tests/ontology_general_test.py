@@ -75,22 +75,24 @@ class OntologyTCG(TCG):
                 PREFIX : <mozg:test:>
 
                 INSERT DATA {
-                    _:pl-dane-link
+                    :pl-dane-link
                         :val "https://www.youtube.com/watch?v=E89x6LpA6Uw";
                         :is :link;
                         :feat :youtube .
-                    _:switss-political-system
+                    :switss-political-system
                         :name "Swiss Political System"
 
-                    _:source-inst
-                        :feat _:source-role-1, _:source-of-role-1;
+                    :Source :feat SourceRole, SourceOfRole.
+
+                    :source-inst
+                        :feat :source-role-1, :source-of-role-1;
                         :is :Source .
-                    _:source-role-1
+                    :source-role-1
                         :is :SourceRole;
-                        :feat _:pl-dane-link .
-                    _:source-of-role-1
+                        :feat :pl-dane-link .
+                    :source-of-role-1
                         :is :SourceOfRole;
-                        :feat _:switss-political-system.
+                        :feat :switss-political-system.
                 }
             '''),
             checks=[
@@ -118,13 +120,15 @@ class OntologyTCG(TCG):
 def setup_case(tc: Tc, sparql: SPARQLWrapper, meta: Meta) -> None:
     if tc.init_query != meta.last_init_query:
         sparql.setMethod(POST)
+        sparql.setQuery('CLEAR DEFAULT')
+        sparql.query()
         sparql.setQuery(tc.init_query)
         sparql.query()
         meta.last_init_query = tc.init_query
     sparql.setMethod(GET)
 
 
-@pytest.fixture(scope='module', autouse=True)
+@pytest.fixture(scope='module', autouse=False)
 def teardown_session(sparql):
     yield
     sparql.setMethod(POST)
