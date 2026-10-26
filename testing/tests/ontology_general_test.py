@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 import os
-from collections.abc import Sequence
-from dataclasses import dataclass, make_dataclass
+from collections.abc import Iterable, Sequence
+from dataclasses import dataclass
 from textwrap import dedent
-from typing import Any, Final, TypedDict
-from collections.abc import Iterable
+from typing import Any
 
 import pytest
 from core.tcg import TCG
@@ -20,9 +19,30 @@ class Meta:
     last_init_query: str = ''
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='module')
 def meta() -> Meta:
     return Meta()
+
+
+@pytest.fixture(scope='module')
+def db_conf() -> DBConf:
+    return DBConf(
+        auth=Auth(
+            user=os.environ['TEST_DB_USER'],
+            password=os.environ['TEST_DB_PASSWORD'],
+        ),
+        conn_params=ConnectionParameters.from_uri('http://localhost:7020'),
+        repo='mozg-test',
+    )
+
+
+@pytest.fixture(scope='module')
+def sparql(db_conf: DBConf) -> SPARQLWrapper:
+    return SPARQLWrapper(
+        db_conf.query_endpoint,
+        updateEndpoint=db_conf.update_endpoint,
+    )
+
 
 @dataclass
 class TC:
@@ -78,33 +98,25 @@ class OntologyTCG(TCG):
                 expected=check.expected,
             )
 
-@pytest.fixture
-def db_conf() -> DBConf:
-    return DBConf(
-        auth=Auth(
-            user=os.environ['TEST_DB_USER'],
-            password=os.environ['TEST_DB_PASSWORD'],
-        ),
-        conn_params=ConnectionParameters.from_uri('http://localhost:7020'),
-        repo='mozg-test',
-    )
 
-
-@pytest.fixture
-def sparql(db_conf: DBConf) -> SPARQLWrapper:
-    return SPARQLWrapper(
-        db_conf.query_endpoint,
-        updateEndpoint=db_conf.update_endpoint,
-    )
-
-
-@OntologyTCG.parametrize('tc')
-def test(tc: Tc, sparql: SPARQLWrapper, meta: Meta) -> None:
+@pytest.fixture(autouse=True)
+def setup_case(tc: Tc, sparql: SPARQLWrapper, meta: Meta) -> None:
     if tc.init_query != meta.last_init_query:
         sparql.setMethod(POST)
         sparql.setQuery(tc.init_query)
         sparql.query()
         meta.last_init_query = tc.init_query
-        sparql.setMethod(GET)
-        print(meta)
+    sparql.setMethod(GET)
+
+
+@pytest.fixture(scope='module', autouse=True)
+def teardown_session(sparql):
+    yield
+    sparql.setMethod(POST)
+    sparql.setQuery('CLEAR DEFAULT')
+    sparql.query()
+
+
+@OntologyTCG.parametrize('tc')
+def test(tc: Tc, sparql: SPARQLWrapper, meta: Meta) -> None:
     ...
