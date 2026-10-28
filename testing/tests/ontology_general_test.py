@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pydash as _
+from pydash import chain as c
 import os
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
@@ -8,7 +10,7 @@ from typing import Any
 
 import pytest
 from core.tcg import TCG
-from SPARQLWrapper import GET, POST, SPARQLWrapper
+from SPARQLWrapper import GET, JSON, POST, SPARQLWrapper
 
 from context.db_conf import Auth, ConnectionParameters, DBConf
 
@@ -75,14 +77,22 @@ class OntologyTCG(TCG):
                 PREFIX : <mozg:test:>
 
                 INSERT DATA {
+                    :Clause :feat :Subject.
+                    :Action
+                        :sub :Clause;
+                        :feat :Actor, :Undergoer.
+                    :Source
+                        :sub :Action;
+                        :feat :SourceRole, :SourceOfRole.
+                    :SourceRole :sub :Subject.
+                    :SourceOfRole :sub :Subject.
+
                     :pl-dane-link
                         :val "https://www.youtube.com/watch?v=E89x6LpA6Uw";
                         :is :link;
                         :feat :youtube .
-                    :switss-political-system
+                    :swiss-political-system
                         :name "Swiss Political System"
-
-                    :Source :feat :SourceRole, :SourceOfRole.
 
                     :source-inst
                         :feat :source-role-1, :source-of-role-1;
@@ -92,13 +102,28 @@ class OntologyTCG(TCG):
                         :feat :pl-dane-link .
                     :source-of-role-1
                         :is :SourceOfRole;
-                        :feat :switss-political-system.
+                        :feat :swiss-political-system.
                 }
             '''),
             checks=[
                 Check(
                     descr='',
-                    query='',
+                    query='''
+                        PREFIX : <mozg:test:>
+                        SELECT *
+                        WHERE {
+                            ?topic
+                                :name "Swiss Political System";
+                                ^:feat+ ?relation.
+                            ?relation
+                                :is/:sub+ :Clause ;
+                                :feat ?argument.
+                            ?argument
+                                :is/:sub :Subject;
+                                :feat+ ?node .
+                            ?node ?prop ?val .
+                        }
+                    ''',
                     expected='',
                 ),
             ],
@@ -126,6 +151,7 @@ def setup_case(tc: Tc, sparql: SPARQLWrapper, meta: Meta) -> None:
         sparql.query()
         meta.last_init_query = tc.init_query
     sparql.setMethod(GET)
+    sparql.setReturnFormat(JSON)
 
 
 @pytest.fixture(scope='module', autouse=False)  # TODO: set to autose
@@ -138,4 +164,13 @@ def teardown_session(sparql):
 
 @OntologyTCG.parametrize('tc')
 def test(tc: Tc, sparql: SPARQLWrapper, meta: Meta) -> None:
-    ...
+    sparql.setQuery(tc.check_query)
+    result = sparql.query().convert()
+    bindings, headers = _.at(result, 'results.bindings', 'head.vars')  # pyright: ignore[reportCallIssue]
+    print()
+    print('\t'.join(headers))
+    for binding in bindings:
+        keys = binding.keys()
+        vals = c(binding).at(*keys).map(c().get('value').replace_start('mozg:test:', '')).value()
+        print('\t'.join(vals))
+    pytest.exit(NotImplemented)
