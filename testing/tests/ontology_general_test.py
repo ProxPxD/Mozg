@@ -86,6 +86,21 @@ class OntologyTCG(TCG):
                         :feat :SourceRole, :SourceOfRole.
                     :SourceRole :sub :Subject.
                     :SourceOfRole :sub :Subject.
+                    :Watch
+                        :sub :Action;
+                        :feat :WatcherRole, :WatchedRole.
+                    :WatcherRole :sub :Actor.
+                    :WatchedRole :sub :Undergoer.
+                    :Want
+                        :sub :Action;
+                        :feat :WanterRole, :WantedRole.
+                    :WanterRole :sub :Actor.       # Experiencer?
+                    :WantedRole :sub :Undergoer.   # Stimulus?
+                    :Should
+                        :sub :Action;
+                        :feat :ObligedRole, :DutyRole.
+                    :ObligedRole :sub :Actor.
+                    :DutyRole :sub :Undergoer.
 
                     :pl-dane-link
                         :val "https://www.youtube.com/watch?v=E89x6LpA6Uw";
@@ -94,7 +109,7 @@ class OntologyTCG(TCG):
                     :swiss-political-system
                         :name "Swiss Political System"
 
-                    :source-inst
+                    :source-inst-1
                         :feat :source-role-1, :source-of-role-1;
                         :is :Source .
                     :source-role-1
@@ -103,6 +118,36 @@ class OntologyTCG(TCG):
                     :source-of-role-1
                         :is :SourceOfRole;
                         :feat :swiss-political-system.
+
+                    :want-inst-1
+                        :feat :wanter-role-1, :wanted-role-1;
+                        :is :Want .
+                    :wanter-role-1
+                        :is :WanterRole;
+                        :feat :piotr .
+                    :wanted-role-1
+                        :is :WantedRole;
+                        :feat :watch-inst-1.
+
+                    :watch-inst-1
+                        :feat :watcher-role-1, :watched-role-1;
+                        :is :Watch .
+                    :watcher-role-1
+                        :is :WatcherRole;
+                        :feat :anhi .
+                    :watched-role-1
+                        :is :WatchedRole;
+                        :feat :pl-dane-link.
+
+                    :should-inst-1
+                        :feat :shoulder-role-1, :shoulded-role-1;
+                        :is :Should .
+                    :shoulder-role-1
+                        :is :ObligedRole;
+                        :feat :anhi .
+                    :shoulded-role-1
+                        :is :DutyRole;
+                        :feat :watch-inst-1.  # ?Maybe watcher-role-1
                 }
             '''),
             checks=[
